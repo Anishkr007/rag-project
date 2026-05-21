@@ -271,3 +271,15 @@ MIT License — feel free to use this in your portfolio, resume, or production a
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing`)
 5. Open a Pull Request
+
+---
+
+## 🛠️ Deployment Troubleshooting
+
+If you encounter issues during deployment to Render, Streamlit Cloud, or Railway:
+
+1. **Port Binding Issue**: Ensure your cloud provider is injecting the `$PORT` environment variable. Our `Procfile` and `Dockerfile` automatically use it. If not, set it manually in the environment settings (e.g. `PORT=8501`).
+2. **Missing Dependencies**: Our `requirements.txt` is strictly tested. If your build fails, ensure your platform is using **Python 3.11.9**, as specified in `runtime.txt`.
+3. **Environment Variables**: Cloud providers do **not** read your local `.env` file! You must manually copy variables from `.env` into the environment variables / secrets dashboard of your chosen platform.
+4. **Pinecone Index Dimension**: Ensure your `text-embedding-3-small` dimensions match your Pinecone index dimensions exactly. If you changed the embeddings dimension locally, make sure your cloud Pinecone index matches.
+5. **Memory Limits**: The RAG pipeline processes PDFs entirely in memory. If your app crashes out of memory during PDF upload on the free tier of Render or Railway, consider limiting the maximum PDF file size or upgrading to a paid tier.

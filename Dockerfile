@@ -3,7 +3,7 @@
 # ============================================
 # Multi-stage build for a lean production image.
 
-FROM python:3.11-slim
+FROM python:3.11.9-slim
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -28,15 +28,9 @@ COPY . .
 # Create data directory
 RUN mkdir -p data
 
-# Expose Streamlit default port
-EXPOSE 8501
-
-# Health check
-HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health || exit 1
-
-# Run Streamlit
-ENTRYPOINT ["streamlit", "run", "app.py", \
-    "--server.port=8501", \
-    "--server.address=0.0.0.0", \
-    "--server.headless=true", \
-    "--browser.gatherUsageStats=false"]
+# Run Streamlit with dynamic port evaluation for cloud platforms like Render/Railway
+CMD sh -c "streamlit run app.py \
+    --server.port=${PORT:-8501} \
+    --server.address=0.0.0.0 \
+    --server.headless=true \
+    --browser.gatherUsageStats=false"
